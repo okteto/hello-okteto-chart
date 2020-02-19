@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "hello-okteto.fullname" . }}
+  annotations:
+    dev.okteto.com/auto-ingress: "true"    
+  labels:
+    app: "{{ template "hello-okteto.fullname" . }}"
+    chart: "{{ template "hello-okteto.chart" . }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ include "hello-okteto.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
